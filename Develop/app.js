@@ -10,6 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const employees = [];
 const employeeQuestions = [
   {
     message: "What is the employee's name?",
@@ -22,7 +23,7 @@ const employeeQuestions = [
     name: "id",
   },
   {
-    message: "What is the employee's name?",
+    message: "What is the employee's email?",
     type: "input",
     name: "email",
   },
@@ -34,6 +35,7 @@ const employeeQuestions = [
 
 // Ask for the employee's role
 function askForEmployeeRole() {
+  console.log("Add a team member");
   inquirer
     .prompt({
       message: "What is your role?",
@@ -45,29 +47,113 @@ function askForEmployeeRole() {
       if (response.role === "Engineer") {
         askForEngineerInfo();
       } else if (response.role === "Intern") {
-        askForInternInfo;
+        askForInternInfo();
+      }
+    });
+}
+
+function askToContinue() {
+  inquirer
+    .prompt({
+      message: "Do you want to add another team member?",
+      name: "addNew",
+      type: "list",
+      choices: ["Yes", "No"],
+    })
+    .then((addNew) => {
+      if (addNew == "Yes") {
+        askForEmployeeRole();
+      } else {
+        createHtmlFile();
+        //render our employeess
+        console.log("Team built");
+        console.log(employees);
       }
     });
 }
 
 //Ask for Manager information
 function askForManagerInfo() {
-  inquirer.prompt().then();
-
-  console.log("Ask for manager");
+  console.log("Add a new Manager");
+  console.log("------------------");
+  inquirer
+    .prompt([
+      ...employeeQuestions,
+      {
+        message: "What is the employee's phone number",
+        type: "input",
+        name: "phone",
+      },
+    ])
+    .then(({ name, id, email, phone }) => {
+      employees.push(new Manager(name, id, email, phone));
+      askForEmployeeRole();
+    });
 }
 // Ask for Engineer information
 function askForEngineerInfo() {
-  inquirer.prompt().then();
-  console.log("Ask for Engineer");
+  console.log("Add a new Engineer");
+  console.log("------------------");
+  inquirer
+    .prompt([
+      ...employeeQuestions,
+      {
+        message: "What is the employee's github username?",
+        type: "input",
+        name: "github",
+      },
+    ])
+    .then(({ name, id, email, github }) => {
+      // Build a new Engineer object
+
+      // Add the new Engineer to a list
+      //employees.push(engineer)
+      employees.push(new Engineer(name, id, email, github));
+      // Ask user if they want to add another employee
+      askToContinue();
+    });
 }
 // Ask fro Intern Information
 function askForInternInfo() {
-  inquirer.prompt().then();
+  console.log("Add a new Intern");
+  console.log("------------------");
+  inquirer
+    .prompt([
+      ...employeeQuestions,
+      {
+        message: "What school is the intern attending?",
+        type: "input",
+        name: "school",
+      },
+    ])
+    .then(({ name, id, email, school }) => {
+      // Build a new Intern object
+      employees.push(new Intern(name, id, email, school));
+      // Add the new Intern to a list
+      askToContinue();
+      //employees.push(Intern)
+
+      // Ask user if they want to add another employee
+      console.log(response);
+    })
+    .then();
   console.log("Ask for Intern");
 }
 
-askForEmployeeRole();
+function createHtmlFile() {
+  const html = render(employees);
+
+  if (!fs.existsSync(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR);
+  }
+
+  fs.writeFile(outputPath, html, (err) => {
+    if (err) console.log(err);
+    else console.log("HTML File Created!");
+  });
+}
+
+askForManagerInfo();
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
