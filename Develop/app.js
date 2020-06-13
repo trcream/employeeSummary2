@@ -16,10 +16,58 @@ const employeeQuestions = [
     type: "input",
     name: "name",
   },
+  {
+    message: "What is the employee's ID?",
+    type: "input",
+    name: "id",
+  },
+  {
+    message: "What is the employee's name?",
+    type: "input",
+    name: "email",
+  },
 ];
 
-inquirer.prompt(employeeQuestions).then((response) => {});
+/* inquirer.prompt(employeeQuestions).then((response) => {
+  console.log(response);
+}); */
 
+// Ask for the employee's role
+function askForEmployeeRole() {
+  inquirer
+    .prompt({
+      message: "What is your role?",
+      name: "role",
+      type: "list",
+      choices: ["Engineer", "Intern"],
+    })
+    .then((response) => {
+      if (response.role === "Engineer") {
+        askForEngineerInfo();
+      } else if (response.role === "Intern") {
+        askForInternInfo;
+      }
+    });
+}
+
+//Ask for Manager information
+function askForManagerInfo() {
+  inquirer.prompt().then();
+
+  console.log("Ask for manager");
+}
+// Ask for Engineer information
+function askForEngineerInfo() {
+  inquirer.prompt().then();
+  console.log("Ask for Engineer");
+}
+// Ask fro Intern Information
+function askForInternInfo() {
+  inquirer.prompt().then();
+  console.log("Ask for Intern");
+}
+
+askForEmployeeRole();
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
